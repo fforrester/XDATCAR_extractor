@@ -1,16 +1,26 @@
+"""
+Utilities for VASP AIMD analysis.
+"""
+
 from setuptools import setup, find_packages
+from figure_formatting.version import __version__ as VERSION
+
+readme = "README.md"
+long_description = open(readme).read()
 
 setup(
-    name='conductivity-calculator',
-    version='1.0',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'pymatgen',
-    ],
-    entry_points={
-        'console_scripts': [
-            'conductivity_calculator = conductivity_calculator:main',
-        ],
-    },
+    name="figure-formatting",
+    version=VERSION,
+    description="Python utilities for VASP AIMD analysis",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Benjamin J. Morgan",
+    author_email="f.forrester2@ncl.ac.uk",
+    url="https://github.com/fforrester/AIMD-extractor",
+    download_url="https://github.com/fforrester/AIMD-extractor/archive/{}.tar.gz".format(
+        VERSION
+    ),
+    license="MIT",
+    install_requires=["pymatgen","numpy"],
+    python_requires=">=3.7",
 )
