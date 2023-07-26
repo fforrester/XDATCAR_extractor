@@ -5,6 +5,7 @@ import os
 import argparse
 import re
 import json
+import sys
 
 class InvalidTemperatureFormatError(ValueError):
     pass
@@ -54,8 +55,8 @@ def get_temperature_directories():
 
     return sorted(temperatures)  # Sort temperatures in ascending order
 
-def get_run_range(temperature):
-    run_variations = read_run_variations()
+def get_run_range(temperature, config_file):
+    run_variations = read_run_variations_from_file(config_file)
     current_directory = os.getcwd()
 
     # Use regular expression to find three or four consecutive digits in the temperature value
@@ -100,7 +101,7 @@ def get_run_range(temperature):
 
     return min(numeric_directories), max(numeric_directories)
 
-def calculate_conductivity(species, temperatures, outfile, time_step=2, ballistic_skip=50, step_skip=1, smoothed="max"):
+def calculate_conductivity(species, temperatures, outfile, time_step=2, ballistic_skip=50, step_skip=1, smoothed="max", config_file="run_variations.json"):
     all_trajectories = []
     diffusivities = []
 
@@ -110,7 +111,7 @@ def calculate_conductivity(species, temperatures, outfile, time_step=2, ballisti
     write_to_output(outfile, "-----------------------------")
 
     for temperature in temperatures:
-        run_start, run_end = get_run_range(temperature)
+        run_start, run_end = get_run_range(temperature, config_file)
         if run_start is None or run_end is None:
             write_to_output(outfile, f"No run directories found for {temperature} K. Skipping...")
             continue
@@ -154,6 +155,7 @@ def main():
     parser.add_argument("--ballistic_skip", type=int, default=50, help="Number of steps to skip to avoid ballistic region.")
     parser.add_argument("--step_skip", type=int, default=1, help="Number of steps to skip for efficiency.")
     parser.add_argument("--smoothed", type=str, default="max", help="Type of smoothing for MSD.")
+    parser.add_argument("--config_file", type=str, default="run_variations.json", help="Path to the configuration file.")
     parser.add_argument("--temperatures", nargs="+", type=int, help="List of temperatures in Kelvin.")
     args = parser.parse_args()
 
@@ -167,7 +169,7 @@ def main():
 
     calculate_conductivity(args.species, temperatures, args.outfile,
                            time_step=args.time_step, ballistic_skip=args.ballistic_skip,
-                           step_skip=args.step_skip, smoothed=args.smoothed)
+                           step_skip=args.step_skip, smoothed=args.smoothed, config_file=args.config_file)
 
 if __name__ == "__main__":
     main()
