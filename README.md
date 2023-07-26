@@ -10,7 +10,7 @@ git clone https://github.com/fforrester/AIMD_extractor
 cd AIMD_extractor
 pip install .
 ```
-# Alternatively
+### Alternatively
 ```
 pip install git+https://github.com/fforrester/AIMD_extractor.git
 ```
@@ -23,5 +23,8 @@ To view functionality, view the help message:
 AIMD_extractor --help
 ```
 
+## Disclaimer
+
+This code is not affiliated with VASP. This programme is made available under the MIT License; use and modify it at your own risk.
 
 
