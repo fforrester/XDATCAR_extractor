@@ -1,10 +1,10 @@
 # AIMD_extractor
 Tool for extracting MSD, calculating activation energy, conductivities and diffusivities from VASP AIMD runs.
 
-Note: This code is not robust and is only intended for use within the author's directory architecture. An example of this is given below:
+Note: This code is not robust and is only intended for use within the author's directory architecture. A couple of examples of situations where this will work are given below:
 
 temperature_1000 / run_{i} / XDATCAR  
-temperture_800 / run_{j} / XDATCAR   
+800K / run{j} / XDATCAR   
 
 Variability in the number of runs per temperature is permitted, i.e. where i ≠ j
 
