@@ -17,16 +17,6 @@ def write_to_output(outfile, string):
     with open(outfile, "a+") as f:
         f.write(string + "\n")
 
-def read_temperature_variations():
-    with open("temperature_variations.json", "r") as f:
-        data = json.load(f)
-    return data["variations"]
-
-def read_run_variations():
-    with open("run_variations.json", "r") as f:
-        data = json.load(f)
-    return data["variations"]
-
 def get_temperature_directories():
     current_directory = os.getcwd()
     subdirectories = next(os.walk(current_directory))[1]
@@ -39,16 +29,6 @@ def get_temperature_directories():
             if match:
                 temperature = int(match.group())
                 temperatures.append(temperature)
-            else:
-                # If the temperature does not match directly, try variations from the configuration file
-                run_variations = read_run_variations()
-                for variation, format_string in run_variations.items():
-                    if variation in subdir:
-                        match = re.search(r'\b\d{3,4}\b', subdir.replace(variation, ""))
-                        if match:
-                            temperature = int(match.group())
-                            temperatures.append(temperature)
-                            break
         except ValueError:
             # If a ValueError occurs during int(match.group()), ignore this subdirectory
             pass
@@ -56,35 +36,20 @@ def get_temperature_directories():
     return sorted(temperatures)  # Sort temperatures in ascending order
 
 def get_run_range(temperature, config_file):
-    run_variations = read_run_variations()
     current_directory = os.getcwd()
 
     # Use regular expression to find three or four consecutive digits in the temperature value
     match = re.search(r'\b\d{3,4}\b', str(temperature))
     if match:
         temperature = int(match.group())
-    else:
-        # If numeric temperature is not found, try variations from the configuration file
-        for variation, format_string in run_variations.items():
-            if variation in str(temperature):
-                match = re.search(r'\b\d{3,4}\b', str(temperature).replace(variation, ""))
-                if match:
-                    temperature = int(match.group())
-                    break
-        else:
+           else:
             raise InvalidTemperatureFormatError(f"Invalid temperature format for '{temperature}'.")
 
-    temperature_directory = os.path.join(current_directory, str(temperature))
+
+      temperature_directory = os.path.join(current_directory, str(temperature))
 
     if not os.path.exists(temperature_directory):
-        # If the directory with the numeric temperature is not found, try variations from the configuration file
-        for variation, format_string in run_variations.items():
-            run_directory_variation = os.path.join(current_directory, format_string.format(run=temperature))
-            if os.path.exists(run_directory_variation):
-                temperature_directory = run_directory_variation
-                break
-        else:
-            raise TemperatureDirectoryNotFoundError(f"Temperature directory '{temperature_directory}' does not exist.")
+        raise TemperatureDirectoryNotFoundError(f"Temperature directory '{temperature_directory}' does not exist.")
 
     run_directories = [dir_name for dir_name in os.listdir(temperature_directory) if os.path.isdir(os.path.join(temperature_directory, dir_name))]
     numeric_directories = []
