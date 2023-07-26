@@ -28,8 +28,20 @@ def get_temperature_directories():
     return sorted(temperatures)  # Sort temperatures in ascending order
 
 def get_run_range(temperature):
-    existing_directories = next(os.walk(f"{temperature}"))[1]
-    numeric_directories = [int(dir_name.split("_")[1]) for dir_name in existing_directories if dir_name.startswith("run_")]
+    current_directory = os.getcwd()
+    temperature_directory= os.path.join(current_directory, str(temperature))
+
+    if not os.path.exists(temperature_directory):
+        return None, None
+    run_directories = [dir_name for dir_name in os.listdir(temperature_directory) if os.path.isdir(os.path.join(temperature_directory, dir_name))]
+    numeric_directories = []
+    
+    for dir_name in run_directories:
+        # Extract numeric run number from the directory name
+        match = re.search(r'\d+', dir_name)
+        if match:
+            run_number = int(match.group())
+            numeric_directories.append(run_number)
 
     if not numeric_directories:
         return None, None
