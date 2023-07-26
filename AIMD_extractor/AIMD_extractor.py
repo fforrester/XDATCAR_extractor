@@ -28,22 +28,33 @@ def get_temperature_directories():
     return sorted(temperatures)  # Sort temperatures in ascending order
 
 def get_run_range(temperature):
+    # Use regular expression to find three or four consecutive digits in the temperature value
+    match = re.search(r'\b\d{3,4}\b', str(temperature))
+    if match:
+        temperature = int(match.group())
+    else:
+        print(f"Invalid temperature format for '{temperature}'.")
+        return None, None
+
     current_directory = os.getcwd()
-    temperature_directory= os.path.join(current_directory, str(temperature))
+    temperature_directory = os.path.join(current_directory, str(temperature))
 
     if not os.path.exists(temperature_directory):
+        print(f"Temperature directory '{temperature_directory}' does not exist.")
         return None, None
+
     run_directories = [dir_name for dir_name in os.listdir(temperature_directory) if os.path.isdir(os.path.join(temperature_directory, dir_name))]
     numeric_directories = []
-    
+
     for dir_name in run_directories:
-        # Extract numeric run number from the directory name
+        # Use regular expression to find numeric run number from the directory name
         match = re.search(r'\d+', dir_name)
         if match:
             run_number = int(match.group())
             numeric_directories.append(run_number)
 
     if not numeric_directories:
+        print(f"No run directories found inside '{temperature_directory}'.")
         return None, None
 
     return min(numeric_directories), max(numeric_directories)
