@@ -3,10 +3,10 @@ Tool for extracting MSD, calculating activation energy, conductivities and diffu
 
 Note: This code is not robust and is only intended for use within the author's directory architecture. An example of this is given below:
 
-temperature_1000/run_{i}/XDATCAR  # Output trajectory files at 1000 K
-temperture_800/run_{j}/XDATCAR    # Output trajectory files at 1000 K
+temperature_1000 / run_{i} / XDATCAR  
+temperture_800 / run_{j} / XDATCAR   
 
-Variability in the number of runs per temperature is permitted i.e. where i ≠ j
+Variability in the number of runs per temperature is permitted, i.e. where i ≠ j
 
 ## Installation
 
