@@ -1,4 +1,4 @@
-# AIMD-extractor
+# AIMD_extractor
 Tool for extracting MSD, calculating activation energy, conductivities and diffusivities from VASP AIMD runs
 
 
@@ -6,13 +6,13 @@ Tool for extracting MSD, calculating activation energy, conductivities and diffu
 
 Clone the repo and install:
 
-git clone https://github.com/fforrester/AIMD-extractor
-cd AIMD-extractor
+git clone https://github.com/fforrester/AIMD_extractor
+cd AIMD_extractor
 pip install .
 
 ## Alternatively
 
-pip install git+https://github.com/fforrester/AIMD-extractor.git
+pip install git+https://github.com/fforrester/AIMD_extractor.git
 
 
 
