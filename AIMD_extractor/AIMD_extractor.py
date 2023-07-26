@@ -22,16 +22,8 @@ def read_temperature_variations():
     return data["variations"]
 
 def read_run_variations():
-    # Get the path of the current directory
-    current_directory = os.path.abspath(os.path.dirname(__file__))
-
-    # Specify the path to the run_variations.json file in the package directory
-    variations_file = os.path.join(current_directory, "run_variations.json")
-
-    # Read the variations from the file
-    with open(variations_file, "r") as f:
+    with open("run_variations.json", "r") as f:
         data = json.load(f)
-
     return data["variations"]
 
 def get_temperature_directories():
@@ -46,6 +38,16 @@ def get_temperature_directories():
             if match:
                 temperature = int(match.group())
                 temperatures.append(temperature)
+            else:
+                # If the temperature does not match directly, try variations from the configuration file
+                run_variations = read_run_variations()
+                for variation, format_string in run_variations.items():
+                    if variation in subdir:
+                        match = re.search(r'\b\d{3,4}\b', subdir.replace(variation, ""))
+                        if match:
+                            temperature = int(match.group())
+                            temperatures.append(temperature)
+                            break
         except ValueError:
             # If a ValueError occurs during int(match.group()), ignore this subdirectory
             pass
