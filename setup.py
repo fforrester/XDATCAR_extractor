@@ -8,6 +8,14 @@ from AIMD_extractor.version import __version__ as VERSION
 readme = "README.md"
 long_description = open(readme).read()
 
+# Get the path of the current directory
+current_directory = os.path.abspath(os.path.dirname(__file__))
+
+# Include the configuration files in the package data
+package_data = {
+    'AIMD_extractor': ['temperature_variations.json', 'run_variations.json'],
+}
+
 setup(
     name="AIMD_extractor",
     version=VERSION,
@@ -24,9 +32,10 @@ setup(
     install_requires=["pymatgen","pymatgen-analysis-diffusion","numpy"],
     python_requires=">=3.7",
     entry_points={
-    'console_scripts': [
-        'AIMD_extractor = AIMD_extractor.AIMD_extractor:main',
-    ],
-}
-
+        'console_scripts': [
+            'AIMD_extractor = AIMD_extractor.AIMD_extractor:main',
+        ],
+    },
+    package_data=package_data,
+    include_package_data=True,
 )
