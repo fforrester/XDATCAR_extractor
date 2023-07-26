@@ -2,6 +2,7 @@ import numpy as np
 from pymatgen.analysis.diffusion.analyzer import DiffusionAnalyzer, fit_arrhenius, get_extrapolated_conductivity
 from pymatgen.io.vasp.outputs import Xdatcar
 import os
+import re
 import argparse
 import json
 
