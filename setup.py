@@ -25,7 +25,7 @@ setup(
     python_requires=">=3.7",
     entry_points={
     'console_scripts': [
-        'AIMD_extractor = AIMD_extractor.py:main',
+        'AIMD_extractor = AIMD_extractor.AIMD_extractor:main',
     ],
 }
 
