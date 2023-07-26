@@ -9,15 +9,15 @@ readme = "README.md"
 long_description = open(readme).read()
 
 setup(
-    name="figure-formatting",
+    name="AIMD_extractor",
     version=VERSION,
     description="Python utilities for VASP AIMD analysis",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Benjamin J. Morgan",
+    author="Frazer N. Forrester",
     author_email="f.forrester2@ncl.ac.uk",
-    url="https://github.com/fforrester/AIMD-extractor",
-    download_url="https://github.com/fforrester/AIMD-extractor/archive/{}.tar.gz".format(
+    url="https://github.com/fforrester/AIMD_extractor",
+    download_url="https://github.com/fforrester/AIMD_extractor/archive/{}.tar.gz".format(
         VERSION
     ),
     license="MIT",
