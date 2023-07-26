@@ -42,8 +42,8 @@ def get_run_range(temperature, config_file):
     match = re.search(r'\b\d{3,4}\b', str(temperature))
     if match:
         temperature = int(match.group())
-        else:
-            raise InvalidTemperatureFormatError(f"Invalid temperature format for '{temperature}'.")
+    else:
+        raise InvalidTemperatureFormatError(f"Invalid temperature format for '{temperature}'.")
 
 
       temperature_directory = os.path.join(current_directory, str(temperature))
