@@ -56,7 +56,7 @@ def get_temperature_directories():
     return sorted(temperatures)  # Sort temperatures in ascending order
 
 def get_run_range(temperature, config_file):
-    run_variations = read_run_variations_from_file(config_file)
+    run_variations = read_run_variations()
     current_directory = os.getcwd()
 
     # Use regular expression to find three or four consecutive digits in the temperature value
