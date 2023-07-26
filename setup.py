@@ -21,7 +21,7 @@ setup(
         VERSION
     ),
     license="MIT",
-    install_requires=["pymatgen","numpy"],
+    install_requires=["pymatgen","pymatgen-analysis-diffusion","numpy"],
     python_requires=">=3.7",
     entry_points={
     'console_scripts': [
