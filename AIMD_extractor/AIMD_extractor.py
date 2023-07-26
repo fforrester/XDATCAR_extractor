@@ -3,6 +3,7 @@ from pymatgen.analysis.diffusion.analyzer import DiffusionAnalyzer, fit_arrheniu
 from pymatgen.io.vasp.outputs import Xdatcar
 import os
 import argparse
+import re
 
 def write_to_output(outfile, string):
     with open(outfile, "a+") as f:
@@ -15,9 +16,13 @@ def get_temperature_directories():
     temperatures = []
     for subdir in subdirectories:
         try:
-            temperature = int(subdir)
-            temperatures.append(temperature)
+            # Use regular expression to find three or four consecutive digits in the subdirectory names
+            match = re.search(r'\b\d{3,4}\b',subdir)
+            if match:
+                temperature = int(match.group())
+                temperatures.append(temperature)
         except ValueError:
+            # If a ValueError occurs during int(match.group()), ignore this subdirectory
             pass
 
     return sorted(temperatures)  # Sort temperatures in ascending order
