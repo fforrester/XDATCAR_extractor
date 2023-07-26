@@ -1,0 +1,7 @@
+{
+    "variations": {
+        "run_": "run_{run}",
+        "_run": "{run}_run",
+        "r": "r{run}"
+    }
+}
