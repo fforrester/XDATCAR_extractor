@@ -22,8 +22,16 @@ def read_temperature_variations():
     return data["variations"]
 
 def read_run_variations():
-    with open("run_variations.json", "r") as f:
+    # Get the path of the current directory
+    current_directory = os.path.abspath(os.path.dirname(__file__))
+
+    # Specify the path to the run_variations.json file in the package directory
+    variations_file = os.path.join(current_directory, "run_variations.json")
+
+    # Read the variations from the file
+    with open(variations_file, "r") as f:
         data = json.load(f)
+
     return data["variations"]
 
 def get_temperature_directories():
