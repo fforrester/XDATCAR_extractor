@@ -4,13 +4,17 @@ Tool for extracting MSD, calculating activation energy, conductivities and diffu
 
 ## Installation
 
-You can clone this repository using git:
+Clone the repo and install:
 
 git clone https://github.com/fforrester/AIMD-extractor
+cd AIMD-extractor
+pip install .
 
 ## Alternatively
 
 pip install git+https://github.com/fforrester/AIMD-extractor.git
+
+
 
 
 
