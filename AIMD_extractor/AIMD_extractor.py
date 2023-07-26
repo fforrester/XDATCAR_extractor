@@ -4,10 +4,27 @@ from pymatgen.io.vasp.outputs import Xdatcar
 import os
 import argparse
 import re
+import json
+
+class InvalidTemperatureFormatError(ValueError):
+    pass
+
+class TemperatureDirectoryNotFoundError(FileNotFoundError):
+    pass
 
 def write_to_output(outfile, string):
     with open(outfile, "a+") as f:
         f.write(string + "\n")
+
+def read_temperature_variations():
+    with open("temperature_variations.json", "r") as f:
+        data = json.load(f)
+    return data["variations"]
+
+def read_run_variations():
+    with open("run_variations.json", "r") as f:
+        data = json.load(f)
+    return data["variations"]
 
 def get_temperature_directories():
     current_directory = os.getcwd()
@@ -17,7 +34,7 @@ def get_temperature_directories():
     for subdir in subdirectories:
         try:
             # Use regular expression to find three or four consecutive digits in the subdirectory names
-            match = re.search(r'\b\d{3,4}\b',subdir)
+            match = re.search(r'\b\d{3,4}\b', subdir)
             if match:
                 temperature = int(match.group())
                 temperatures.append(temperature)
@@ -28,20 +45,35 @@ def get_temperature_directories():
     return sorted(temperatures)  # Sort temperatures in ascending order
 
 def get_run_range(temperature):
+    run_variations = read_run_variations()
+    current_directory = os.getcwd()
+
     # Use regular expression to find three or four consecutive digits in the temperature value
     match = re.search(r'\b\d{3,4}\b', str(temperature))
     if match:
         temperature = int(match.group())
     else:
-        print(f"Invalid temperature format for '{temperature}'.")
-        return None, None
+        # If numeric temperature is not found, try variations from the configuration file
+        for variation, format_string in run_variations.items():
+            if variation in str(temperature):
+                match = re.search(r'\b\d{3,4}\b', str(temperature).replace(variation, ""))
+                if match:
+                    temperature = int(match.group())
+                    break
+        else:
+            raise InvalidTemperatureFormatError(f"Invalid temperature format for '{temperature}'.")
 
-    current_directory = os.getcwd()
     temperature_directory = os.path.join(current_directory, str(temperature))
 
     if not os.path.exists(temperature_directory):
-        print(f"Temperature directory '{temperature_directory}' does not exist.")
-        return None, None
+        # If the directory with the numeric temperature is not found, try variations from the configuration file
+        for variation, format_string in run_variations.items():
+            run_directory_variation = os.path.join(current_directory, format_string.format(run=temperature))
+            if os.path.exists(run_directory_variation):
+                temperature_directory = run_directory_variation
+                break
+        else:
+            raise TemperatureDirectoryNotFoundError(f"Temperature directory '{temperature_directory}' does not exist.")
 
     run_directories = [dir_name for dir_name in os.listdir(temperature_directory) if os.path.isdir(os.path.join(temperature_directory, dir_name))]
     numeric_directories = []
@@ -54,8 +86,7 @@ def get_run_range(temperature):
             numeric_directories.append(run_number)
 
     if not numeric_directories:
-        print(f"No run directories found inside '{temperature_directory}'.")
-        return None, None
+        raise RuntimeError(f"No run directories found inside '{temperature_directory}'.")
 
     return min(numeric_directories), max(numeric_directories)
 
@@ -82,51 +113,4 @@ def calculate_conductivity(species, temperatures, outfile, time_step=2, ballisti
 
         structures = structures[ballistic_skip:]
 
-        da = DiffusionAnalyzer.from_structures(structures, species, temperature, time_step, step_skip=step_skip, smoothed=smoothed)
-
-        write_to_output(outfile, f"Printing msd.{temperature}.dat...")
-        da.export_msdt(f"msd.{temperature}.dat")
-
-        diffusivities.append(da.diffusivity)
-        all_trajectories.append(structures)
-
-    Ea, c, sEa = fit_arrhenius(temperatures, diffusivities)
-    write_to_output(outfile, f"Ea = {Ea:.3f} +/- {sEa:.3f}")
-    conductivity = get_extrapolated_conductivity(temperatures, diffusivities, 300, structures[0], species)
-
-    IT = np.divide(1, temperatures)
-    lnD = np.log(diffusivities)
-
-    zipped = np.column_stack((IT, lnD))
-    np.savetxt("arrhenius.txt", zipped)
-
-    write_to_output(outfile, f"conductivity = {conductivity}")
-
-    write_to_output(outfile, "-----------------------------")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Calculate conductivity from DiffusionAnalyzer.")
-    parser.add_argument("species", type=str, help="The chemical species to analyze.")
-    parser.add_argument("--outfile", type=str, default="conductivity.txt", help="Output file name.")
-    parser.add_argument("--time_step", type=float, default=2, help="Time step in femtoseconds (fs).")
-    parser.add_argument("--ballistic_skip", type=int, default=50, help="Number of steps to skip to avoid ballistic region.")
-    parser.add_argument("--step_skip", type=int, default=1, help="Number of steps to skip for efficiency.")
-    parser.add_argument("--smoothed", type=str, default="max", help="Type of smoothing for MSD.")
-    parser.add_argument("--temperatures", nargs="+", type=int, help="List of temperatures in Kelvin.")
-    args = parser.parse_args()
-
-    if not args.temperatures:
-        temperatures = get_temperature_directories()
-        if not temperatures:
-            print("No temperature directories found.")
-            return
-    else:
-        temperatures = sorted(args.temperatures)
-
-    calculate_conductivity(args.species, temperatures, args.outfile,
-                           time_step=args.time_step, ballistic_skip=args.ballistic_skip,
-                           step_skip=args.step_skip, smoothed=args.smoothed)
-
-if __name__ == "__main__":
-    main()
+        da = DiffusionAnalyzer.from_structures(structures, species, temperature, time_step, step_skip=step_skip, smoothed=smoothed
