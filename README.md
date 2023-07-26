@@ -10,11 +10,18 @@ git clone https://github.com/fforrester/AIMD_extractor
 cd AIMD_extractor
 pip install .
 ```
-## Alternatively
+# Alternatively
 ```
 pip install git+https://github.com/fforrester/AIMD_extractor.git
 ```
 
+## Implementation 
+
+To view functionality, view the help message:
+
+```
+AIMD_extractor --help
+```
 
 
 
