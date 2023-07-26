@@ -3,7 +3,7 @@ Utilities for VASP AIMD analysis.
 """
 
 from setuptools import setup, find_packages
-from figure_formatting.version import __version__ as VERSION
+from AIMD_extractor.version import __version__ as VERSION
 
 readme = "README.md"
 long_description = open(readme).read()
