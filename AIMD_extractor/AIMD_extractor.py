@@ -113,4 +113,51 @@ def calculate_conductivity(species, temperatures, outfile, time_step=2, ballisti
 
         structures = structures[ballistic_skip:]
 
-        da = DiffusionAnalyzer.from_structures(structures, species, temperature, time_step, step_skip=step_skip, smoothed=smoothed
+        da = DiffusionAnalyzer.from_structures(structures, species, temperature, time_step, step_skip=step_skip, smoothed=smoothed)
+    
+        write_to_output(outfile, f"Printing msd.{temperature}.dat...")
+        da.export_msdt(f"msd.{temperature}.dat")
+
+        diffusivities.append(da.diffusivity)
+        all_trajectories.append(structures)
+
+    Ea, c, sEa = fit_arrhenius(temperatures, diffusivities)
+    write_to_output(outfile, f"Ea = {Ea:.3f} +/- {sEa:.3f}")
+    conductivity = get_extrapolated_conductivity(temperatures, diffusivities, 300, structures[0], species)
+
+    IT = np.divide(1, temperatures)
+    lnD = np.log(diffusivities)
+
+    zipped = np.column_stack((IT, lnD))
+    np.savetxt("arrhenius.txt", zipped)
+
+    write_to_output(outfile, f"conductivity = {conductivity}")
+
+    write_to_output(outfile, "-----------------------------")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Calculate conductivity from DiffusionAnalyzer.")
+    parser.add_argument("species", type=str, help="The chemical species to analyze.")
+    parser.add_argument("--outfile", type=str, default="conductivity.txt", help="Output file name.")
+    parser.add_argument("--time_step", type=float, default=2, help="Time step in femtoseconds (fs).")
+    parser.add_argument("--ballistic_skip", type=int, default=50, help="Number of steps to skip to avoid ballistic region.")
+    parser.add_argument("--step_skip", type=int, default=1, help="Number of steps to skip for efficiency.")
+    parser.add_argument("--smoothed", type=str, default="max", help="Type of smoothing for MSD.")
+    parser.add_argument("--temperatures", nargs="+", type=int, help="List of temperatures in Kelvin.")
+    args = parser.parse_args()
+
+    if not args.temperatures:
+        temperatures = get_temperature_directories()
+        if not temperatures:
+            print("No temperature directories found.")
+            return
+    else:
+        temperatures = sorted(args.temperatures)
+
+    calculate_conductivity(args.species, temperatures, args.outfile,
+                           time_step=args.time_step, ballistic_skip=args.ballistic_skip,
+                           step_skip=args.step_skip, smoothed=args.smoothed)
+
+if __name__ == "__main__":
+    main()
