@@ -12,94 +12,100 @@ class InvalidTemperatureFormatError(ValueError):
 class TemperatureDirectoryNotFoundError(FileNotFoundError):
     pass
 
-def write_to_output(outfile, string):
+def write_to_output(outfile, string, print_to_console=True):
     with open(outfile, "a+") as f:
         f.write(string + "\n")
 
-def get_temperature_directories():
-    current_directory = os.getcwd()
-    subdirectories = next(os.walk(current_directory))[1]
+    if print_to_console:
+        print(string)
 
-    temperatures = []
-    for subdir in subdirectories:
-        try:
-            # Use regular expression to find three or four consecutive digits in the subdirectory names
-            match = re.search(r'\b\d{3,4}\b', subdir)
+def has_temperature(name):
+    consecutive_digits = 0
+    for char in name:
+        if char.isdigit():
+            consecutive_digits += 1
+        else:
+            consecutive_digits = 0
+
+        if consecutive_digits >= 3 and consecutive_digits <= 4:
+            return True
+
+    return False
+
+def find_directories_with_temperature(root_path):
+    temperature_dict = {}
+
+    subdirectories = [entry for entry in os.listdir(root_path) if os.path.isdir(os.path.join(root_path, entry))]
+    for dirname in subdirectories:
+        if has_temperature(dirname):
+            try:
+                match = re.search(r"\d{3,4}", dirname)
+                if match:
+                    temperature = int(match.group())
+                    temperature_dict[dirname] = temperature
+            except ValueError:
+                # If a ValueError occurs during int(match.group()), ignore this subdirectory
+                pass
+
+    # Sort the dictionary by temperature values in ascending order and return it
+    return {k: v for k, v in sorted(temperature_dict.items(), key=lambda item: item[1])}
+
+def get_run_range(temperature_directories):
+    current_directory = os.getcwd()
+    temperature_range_dict = {}
+    for temperature_dir in temperature_directories:
+        temperature_directory = os.path.join(current_directory, temperature_dir)
+
+        numeric_directories = []
+
+        for dir_name in os.listdir(temperature_directory):
+            # Use regular expression to find numeric run number from the directory name
+            match = re.search(r'\d+', dir_name)
             if match:
-                temperature = int(match.group())
-                temperatures.append(temperature)
-        except ValueError:
-            # If a ValueError occurs during int(match.group()), ignore this subdirectory
-            pass
+                run_number = int(match.group())
+                numeric_directories.append(run_number)
 
-    return sorted(temperatures)  # Sort temperatures in ascending order
+        if not numeric_directories:
+            write_to_output(outfile, f"No run directories found inside '{temperature_directory}'.")
+            continue
+        temperature_range_dict[temperature_dir] = (min(numeric_directories), max(numeric_directories))
 
-def get_run_range(temperature):
-    current_directory = os.getcwd()
+    return temperature_range_dict
 
-    # Use regular expression to find three or four consecutive digits in the temperature value
-    match = re.search(r'\b\d{3,4}\b', str(temperature))
-    if match:
-        temperature = int(match.group())
-    else:
-        raise InvalidTemperatureFormatError(f"Invalid temperature format for '{temperature}'.")
-
-    temperature_directory = os.path.join(current_directory, str(temperature))
-
-    if not os.path.exists(temperature_directory):
-        raise TemperatureDirectoryNotFoundError(f"Temperature directory '{temperature_directory}' does not exist.")
-
-    run_directories = [dir_name for dir_name in os.listdir(temperature_directory) if os.path.isdir(os.path.join(temperature_directory, dir_name))]
-    numeric_directories = []
-
-    for dir_name in run_directories:
-        # Use regular expression to find numeric run number from the directory name
-        match = re.search(r'\d+', dir_name)
-        if match:
-            run_number = int(match.group())
-            numeric_directories.append(run_number)
-
-    if not numeric_directories:
-        raise RuntimeError(f"No run directories found inside '{temperature_directory}'.")
-
-    return min(numeric_directories), max(numeric_directories)
-
-def calculate_conductivity(species, temperatures, outfile, time_step=2, ballistic_skip=50, step_skip=1, smoothed="max"):
+def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2, ballistic_skip=50, step_skip=1, smoothed="max"):
     all_trajectories = []
     diffusivities = []
 
     write_to_output(outfile, "-----------------------------")
     write_to_output(outfile, f"Species: {species}")
-    write_to_output(outfile, f"Temperatures: {temperatures}")
     write_to_output(outfile, "-----------------------------")
 
-    for temperature in temperatures:
+    for temperature_dir, run_range in temperature_range_dict.items():
+        temperature = temperature_range_dict[temperature_dir][0]
         run_start, run_end = get_run_range(temperature)
-        if run_start is None or run_end is None:
-            write_to_output(outfile, f"No run directories found for {temperature} K. Skipping...")
-            continue
 
         structures = []
-        for run in range(run_start, run_end + 1):
-            filepath = f"{temperature}/run_{run}/XDATCAR"
+        for run in range(run_range[0], run_range[1] + 1):
+            filepath = f"{temperature_dir}/run_{run}/XDATCAR"
             write_to_output(outfile, f"Reading from {filepath}...")
             structures += Xdatcar(filepath).structures
 
         structures = structures[ballistic_skip:]
 
         da = DiffusionAnalyzer.from_structures(structures, species, temperature, time_step, step_skip=step_skip, smoothed=smoothed)
-    
+
         write_to_output(outfile, f"Printing msd.{temperature}.dat...")
         da.export_msdt(f"msd.{temperature}.dat")
 
         diffusivities.append(da.diffusivity)
         all_trajectories.append(structures)
 
-    Ea, c, sEa = fit_arrhenius(temperatures, diffusivities)
-    write_to_output(outfile, f"Ea = {Ea:.3f} +/- {sEa:.3f}")
-    conductivity = get_extrapolated_conductivity(temperatures, diffusivities, 300, structures[0], species)
+    Ea, c, sEa = fit_arrhenius([temperature_range_dict[temperature_dir][0] for temperature_dir in temperature_range_dict.keys()], diffusivities)
 
-    IT = np.divide(1, temperatures)
+    write_to_output(outfile, f"Ea = {Ea:.3f} +/- {sEa:.3f}")
+    conductivity = get_extrapolated_conductivity([temperature_range_dict[temperature_dir][0] for temperature_dir in temperature_range_dict.keys()], diffusivities, 300, structures[0], species)
+
+    IT = np.divide(1, [temperature_range_dict[temperature_dir][0] for temperature_dir in temperature_range_dict.keys()])
     lnD = np.log(diffusivities)
 
     zipped = np.column_stack((IT, lnD))
@@ -122,14 +128,17 @@ def main():
     args = parser.parse_args()
 
     if not args.temperatures:
-        temperatures = get_temperature_directories()
-        if not temperatures:
+        temperature_range_dict = find_directories_with_temperature(os.getcwd())
+        if not temperature_range_dict:
             print("No temperature directories found.")
             return
     else:
         temperatures = sorted(args.temperatures)
 
-    calculate_conductivity(args.species, temperatures, args.outfile,
+    # Print the temperatures to the outfile and suppress printing to console
+    write_to_output(args.outfile, "Temperatures: " + ", ".join(map(str, temperature_range_dict.values())), print_to_console=False)
+
+    calculate_conductivity(args.species, temperature_range_dict, args.outfile,
                            time_step=args.time_step, ballistic_skip=args.ballistic_skip,
                            step_skip=args.step_skip, smoothed=args.smoothed)
 
