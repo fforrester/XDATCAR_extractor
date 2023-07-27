@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 from AIMD_extractor.version import __version__ as VERSION
 
-readme = "README.md"
-long_description = open(readme).read()
+with open("README.md","r") as f:
+    long_description = f.read()
 
 setup(
     name="AIMD_extractor",
