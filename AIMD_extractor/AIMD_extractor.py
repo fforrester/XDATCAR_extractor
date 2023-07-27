@@ -81,8 +81,8 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
     write_to_output(outfile, "-----------------------------")
 
     for temperature_dir, run_range in temperature_range_dict.items():
-        temperature = temperature_range_dict[temperature_dir][0]
-        run_start, run_end = get_run_range(temperature)
+        temperature_val = temperature_range_dict[temperature_dir][0]
+        run_start, run_end = get_run_range(temperature_dir)
 
         structures = []
         for run in range(run_range[0], run_range[1] + 1):
