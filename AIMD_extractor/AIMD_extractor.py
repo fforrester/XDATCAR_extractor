@@ -13,7 +13,7 @@ class TemperatureDirectoryNotFoundError(FileNotFoundError):
     pass
 
 def write_to_output(outfile, string, print_to_console=True):
-    with open(outfile, "a+") as f:
+    with open(outfile, "a") as f:  # Changed mode to "a" for writing
         f.write(string + "\n")
 
     if print_to_console:
@@ -50,72 +50,59 @@ def find_directories_with_temperature(root_path):
     # Sort the dictionary by temperature values in ascending order and return it
     return {k: v for k, v in sorted(temperature_dict.items(), key=lambda item: item[1])}
 
-def get_run_range(temperature_directories):
+def get_run_range(temperature_directory):
     current_directory = os.getcwd()
-    temperature_range_dict = {}
-    for temperature_dir in temperature_directories:
-        temperature_directory = os.path.join(current_directory, temperature_dir)
 
-        numeric_directories = []
+    numeric_directories = []
+    for dir_name in os.listdir(temperature_directory):
+        # Use regular expression to find numeric run number from the directory name
+        match = re.search(r'\d+', dir_name)
+        if match:
+            run_number = int(match.group())
+            numeric_directories.append(run_number)
 
-        for dir_name in os.listdir(temperature_directory):
-            # Use regular expression to find numeric run number from the directory name
-            match = re.search(r'\d+', dir_name)
-            if match:
-                run_number = int(match.group())
-                numeric_directories.append(run_number)
+    if not numeric_directories:
+        raise TemperatureDirectoryNotFoundError(f"No run directories found inside '{temperature_directory}'.")
 
-        if not numeric_directories:
-            write_to_output(outfile, f"No run directories found inside '{temperature_directory}'.")
-            continue
-        temperature_range_dict[temperature_dir] = (min(numeric_directories), max(numeric_directories))
+    return min(numeric_directories), max(numeric_directories)
 
-    return temperature_range_dict
-    
 def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2, ballistic_skip=50, step_skip=1, smoothed="max"):
-    all_trajectories = []
-    diffusivities = []
-
     write_to_output(outfile, "-----------------------------")
     write_to_output(outfile, f"Species: {species}")
     write_to_output(outfile, "-----------------------------")
 
-    for temperature_dir, run_range in temperature_range_dict.items():
-        temperature_val = run_range[0]
-        run_start, run_end = get_run_range(temperature_dir)
+    for temperature_dir, temperature in temperature_range_dict.items():
+        temperature_directory = os.path.join(os.getcwd(), temperature_dir)
+        run_start, run_end = get_run_range(temperature_directory)
 
         structures = []
-        for run in range(run_range[0], run_range[1] + 1):
-            filepath = f"{temperature_dir}/run_{run}/XDATCAR"
+        for run in range(run_start, run_end + 1):
+            filepath = os.path.join(temperature_directory, f"run_{run}", "XDATCAR")
             write_to_output(outfile, f"Reading from {filepath}...")
             structures += Xdatcar(filepath).structures
 
         structures = structures[ballistic_skip:]
 
-        da = DiffusionAnalyzer.from_structures(structures, species, temperature_val, time_step, step_skip=step_skip, smoothed=smoothed)
+        da = DiffusionAnalyzer.from_structures(structures, species, temperature, time_step, step_skip=step_skip, smoothed=smoothed)
 
-        write_to_output(outfile, f"Printing msd.{temperature_val}.dat...")
-        da.export_msdt(f"msd.{temperature_val}.dat")
+        write_to_output(outfile, f"Printing msd.{temperature}.dat...")
+        da.export_msdt(f"msd.{temperature}.dat")
 
-        diffusivities.append(da.diffusivity)
-        all_trajectories.append(structures)
+        diffusivities = [da.diffusivity]
+        Ea, c, sEa = fit_arrhenius([temperature], diffusivities)
 
-    Ea, c, sEa = fit_arrhenius([run_range[0] for _, run_range in temperature_range_dict.items()], diffusivities)
+        write_to_output(outfile, f"Ea = {Ea:.3f} +/- {sEa:.3f}")
+        conductivity = get_extrapolated_conductivity([temperature], diffusivities, 300, structures[0], species)
 
-    write_to_output(outfile, f"Ea = {Ea:.3f} +/- {sEa:.3f}")
-    conductivity = get_extrapolated_conductivity([run_range[0] for _, run_range in temperature_range_dict.items()], diffusivities, 300, structures[0], species)
+        IT = np.divide(1, [temperature])
+        lnD = np.log(diffusivities)
 
-    IT = np.divide(1, [run_range[0] for _, run_range in temperature_range_dict.items()])
-    lnD = np.log(diffusivities)
+        zipped = np.column_stack((IT, lnD))
+        np.savetxt("arrhenius.txt", zipped)
 
-    zipped = np.column_stack((IT, lnD))
-    np.savetxt("arrhenius.txt", zipped)
-
-    write_to_output(outfile, f"conductivity = {conductivity}")
+        write_to_output(outfile, f"conductivity = {conductivity}")
 
     write_to_output(outfile, "-----------------------------")
-
-
 
 def main():
     parser = argparse.ArgumentParser(description="Calculate conductivity from DiffusionAnalyzer.")
@@ -135,6 +122,7 @@ def main():
             return
     else:
         temperatures = sorted(args.temperatures)
+        temperature_range_dict = {f"temp_{temp}": temp for temp in temperatures}
 
     # Print the temperatures to the outfile and suppress printing to console
     write_to_output(args.outfile, "Temperatures: " + ", ".join(map(str, temperature_range_dict.values())), print_to_console=False)
