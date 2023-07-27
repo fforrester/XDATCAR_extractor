@@ -16,9 +16,6 @@ def write_to_output(outfile, string):
     with open(outfile, "a") as f:  # Changed mode to "a" for writing
         f.write(string + "\n")
 
-    if print_to_console:
-        print(string)
-
 def has_temperature(name):
     consecutive_digits = 0
     for char in name:
