@@ -71,7 +71,7 @@ def get_run_range(temperature_directories):
         temperature_range_dict[temperature_dir] = (min(numeric_directories), max(numeric_directories))
 
     return temperature_range_dict
-
+    
 def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2, ballistic_skip=50, step_skip=1, smoothed="max"):
     all_trajectories = []
     diffusivities = []
@@ -81,7 +81,7 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
     write_to_output(outfile, "-----------------------------")
 
     for temperature_dir, run_range in temperature_range_dict.items():
-        temperature_val = temperature_range_dict[temperature_dir][0]
+        temperature_val = run_range[0]
         run_start, run_end = get_run_range(temperature_dir)
 
         structures = []
@@ -92,20 +92,20 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
 
         structures = structures[ballistic_skip:]
 
-        da = DiffusionAnalyzer.from_structures(structures, species, temperature, time_step, step_skip=step_skip, smoothed=smoothed)
+        da = DiffusionAnalyzer.from_structures(structures, species, temperature_val, time_step, step_skip=step_skip, smoothed=smoothed)
 
-        write_to_output(outfile, f"Printing msd.{temperature}.dat...")
-        da.export_msdt(f"msd.{temperature}.dat")
+        write_to_output(outfile, f"Printing msd.{temperature_val}.dat...")
+        da.export_msdt(f"msd.{temperature_val}.dat")
 
         diffusivities.append(da.diffusivity)
         all_trajectories.append(structures)
 
-    Ea, c, sEa = fit_arrhenius([temperature_range_dict[temperature_dir][0] for temperature_dir in temperature_range_dict.keys()], diffusivities)
+    Ea, c, sEa = fit_arrhenius([run_range[0] for _, run_range in temperature_range_dict.items()], diffusivities)
 
     write_to_output(outfile, f"Ea = {Ea:.3f} +/- {sEa:.3f}")
-    conductivity = get_extrapolated_conductivity([temperature_range_dict[temperature_dir][0] for temperature_dir in temperature_range_dict.keys()], diffusivities, 300, structures[0], species)
+    conductivity = get_extrapolated_conductivity([run_range[0] for _, run_range in temperature_range_dict.items()], diffusivities, 300, structures[0], species)
 
-    IT = np.divide(1, [temperature_range_dict[temperature_dir][0] for temperature_dir in temperature_range_dict.keys()])
+    IT = np.divide(1, [run_range[0] for _, run_range in temperature_range_dict.items()])
     lnD = np.log(diffusivities)
 
     zipped = np.column_stack((IT, lnD))
@@ -114,6 +114,7 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
     write_to_output(outfile, f"conductivity = {conductivity}")
 
     write_to_output(outfile, "-----------------------------")
+
 
 
 def main():
