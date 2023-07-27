@@ -29,10 +29,10 @@ def has_temperature(name):
 
     return False
 
-def find_directories_with_temperature(root_path):
+def find_directories_with_temperature(path):
     temperature_dict = {}
 
-    subdirectories = [entry for entry in os.listdir(root_path) if os.path.isdir(os.path.join(root_path, entry))]
+    subdirectories = [entry for entry in os.listdir(path) if os.path.isdir(os.path.join(path, entry))]
     for dirname in subdirectories:
         if has_temperature(dirname):
             try:
