@@ -51,6 +51,7 @@ def get_run_range(temperature_directory):
     current_directory = os.getcwd()
 
     numeric_directories = []
+    print(os.listdir(temperature_directory)
     for dir_name in os.listdir(temperature_directory):
         # Use regular expression to find numeric run number from the directory name
         match = re.search(r'\d+', dir_name)
