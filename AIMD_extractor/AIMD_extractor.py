@@ -76,7 +76,7 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
         run_start, run_end = get_run_range(temperature_directory)
 
         structures = []
-        for run in range(run_start, run_end + 1):
+        for run in range(run_start, run_end):
             filepath = os.path.join(temperature_directory, f"run_{run}", "XDATCAR")
             write_to_output(outfile, f"Reading from {filepath}...")
             structures += Xdatcar(filepath).structures
