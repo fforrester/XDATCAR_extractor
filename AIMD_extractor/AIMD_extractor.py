@@ -12,7 +12,7 @@ class InvalidTemperatureFormatError(ValueError):
 class TemperatureDirectoryNotFoundError(FileNotFoundError):
     pass
 
-def write_to_output(outfile, string, print_to_console=True):
+def write_to_output(outfile, string):
     with open(outfile, "a") as f:  # Changed mode to "a" for writing
         f.write(string + "\n")
 
