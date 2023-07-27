@@ -1,9 +1,0 @@
-{
-    "variations": {
-        "K": "{temperature}K",
-        "_K": "{temperature}_K",
-        "K_": "K{temperature}",
-        "temperature": "temperature{temperature}",
-        "T": "T{temperature}"
-    }
-}
