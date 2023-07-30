@@ -40,6 +40,23 @@ def find_numbers_in_directory_names(directory):
     sorted_temperature_dict = {k: v for k, v in sorted(temperature_dict.items(), key=lambda item: item[1])}
     return sorted_temperature_dict
 
+def find_directory_for_temperature(directory, userinputted_temps):
+    # Regular expression to find 3 or 4-digit numbers without preceding or succeeding digits in the directory names
+    regex = r"(?<!\d)([1-9]\d{2,3})(?!\d)"
+    
+    matching_directory = None
+
+    for item in os.listdir(directory):
+        item_path = os.path.join(directory, item)
+        if os.path.isdir(item_path):
+            matches = re.findall(regex, item)
+            if len(matches) == 1:
+                number = int(matches[0])
+                if 99 < number < 2000 and number == userinputted_temps:
+                    matching_directory = item_path
+                    break
+    return matching_directory
+
 def get_run_range(temperature_directory):
     # Use regular expression to find numeric run numbers from the directory names (e.g., run_1, run_2, etc.)
     numeric_directories = [int(re.search(r'run_(\d+)', dir_name).group(1)) for dir_name in os.listdir(temperature_directory) if re.search(r'run_(\d+)', dir_name)]
@@ -106,8 +123,8 @@ def main():
             print("No temperature directories found.")
             return
     else:
-        temperatures = sorted(args.temperatures)
-        temperature_range_dict = {f"{temp}": temp for temp in temperatures}
+        userinputted_temps = sorted(args.temperatures)
+        temperature_range_dict = {f"{temp}": temp for temp in args.temperatures}
 
 
     calculate_conductivity(args.species, temperature_range_dict, args.outfile,
