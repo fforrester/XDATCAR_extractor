@@ -29,12 +29,12 @@ def find_numbers_in_directory_names(directory):
             if len(matches) == 1:
                 number = int(matches[0])
                 if 99 < number < 2000:
-                    print(f"Found valid number '{matches[0]}' in directory: {item}")
+                    print(f"Found temperature '{matches[0]}' in directory: {item}")
                     temperature_dict[item] = number  # Add the valid number to the dictionary
                 else:
-                    print(f"Found a number '{matches[0]}' but it does not meet the criteria in directory: {item}")
+                    print(f"Found a number '{matches[0]}' but it does not meet the criteria in the directory: {item}")
             elif len(matches) > 1:
-                print(f"Ignoring directory: {item} - Contains more than one valid match")
+                print(f"Ignoring directory: {item} - can't confirm temperature.")
     
     # Sort the dictionary based on the number found in directory names
     sorted_temperature_dict = {k: v for k, v in sorted(temperature_dict.items(), key=lambda item: item[1])}
