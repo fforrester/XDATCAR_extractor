@@ -15,20 +15,29 @@ class TemperatureDirectoryNotFoundError(FileNotFoundError):
 def write_to_output(outfile, string):
     with open(outfile, "a") as f:  # Changed mode to "a" for writing
         f.write(string + "\n")
+        
+def find_numbers_in_directory_names(directory):
+    # Regular expression to find 3 or 4-digit numbers without preceding 0 in the directory names
+    regex = r"(?<!\d)([1-9]\d{2,3})(?!\d)"
 
-#funtion to determine whether or not the directory name has a temperature in it
-def has_temperature(name):
-    consecutive_digits = 0
-    for char in name:
-        if char.isdigit():
-            consecutive_digits += 1
-        else:
-            consecutive_digits = 0
+    temperature_dict = {}  # Create an empty dictionary to store the results
 
-        if consecutive_digits >= 3 and consecutive_digits <= 4:
-            return True
-    return False
+    for item in os.listdir(directory):
+        item_path = os.path.join(directory, item)
+        if os.path.isdir(item_path):
+            matches = re.findall(regex, item)
+            if len(matches) == 1:
+                number = int(matches[0])
+                if 99 < number < 2000:
+                    print(f"Found valid number '{matches[0]}' in directory: {item}")
+                    temperature_dict[item] = number  # Add the valid number to the dictionary
+                else:
+                    print(f"Found a number '{matches[0]}' but it does not meet the criteria in directory: {item}")
+            elif len(matches) > 1:
+                print(f"Ignoring directory: {item} - Contains more than one valid match")
+    return temperature_dict 
 
+# Locate directories containing temperatures. 
 def find_directories_with_temperature(path):
     temperature_dict = {}
 
@@ -109,7 +118,7 @@ def main():
     args = parser.parse_args()
 
     if not args.temperatures:
-        temperature_range_dict = find_directories_with_temperature(os.getcwd())
+        temperature_range_dict =  find_numbers_in_directory_names(os.getcwd())
         if not temperature_range_dict:
             print("No temperature directories found.")
             return
