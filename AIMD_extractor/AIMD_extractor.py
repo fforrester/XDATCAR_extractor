@@ -35,27 +35,10 @@ def find_numbers_in_directory_names(directory):
                     print(f"Found a number '{matches[0]}' but it does not meet the criteria in directory: {item}")
             elif len(matches) > 1:
                 print(f"Ignoring directory: {item} - Contains more than one valid match")
-    return temperature_dict 
-
-# Locate directories containing temperatures. 
-def find_directories_with_temperature(path):
-    temperature_dict = {}
-
-    subdirectories = [entry for entry in os.listdir(path) if os.path.isdir(os.path.join(path, entry))]
-    for dirname in subdirectories:
-        if has_temperature(dirname):
-            try:
-                match = re.search(r"\d{3,4}", dirname)
-                if match:
-                    temperature = int(match.group())
-                    temperature_dict[dirname] = temperature
-            except ValueError:
-                # If a ValueError occurs during int(match.group()), ignore this subdirectory
-                pass
     
-    # Sort the dictionary by temperature values in ascending order and return it
-    return {k: v for k, v in sorted(temperature_dict.items(), key=lambda item: item[1])}
-
+    # Sort the dictionary based on the number found in directory names
+    sorted_temperature_dict = {k: v for k, v in sorted(temperature_dict.items(), key=lambda item: item[1])}
+    return sorted_temperature_dict
 
 def get_run_range(temperature_directory):
     # Use regular expression to find numeric run numbers from the directory names (e.g., run_1, run_2, etc.)
