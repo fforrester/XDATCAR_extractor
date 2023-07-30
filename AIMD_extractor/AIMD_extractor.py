@@ -98,13 +98,13 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
     write_to_output(outfile, "-----------------------------")
 
 def main():
-    parser = argparse.ArgumentParser(description="Calculate conductivity from DiffusionAnalyzer.")
+    parser = argparse.ArgumentParser(description="Tool for calculating MSD, diffusivity and conductivity from VASP AIMD runs.")
     parser.add_argument("species", type=str, help="The chemical species to analyze.")
-    parser.add_argument("--outfile", type=str, default="conductivity.txt", help="Output file name.")
+    parser.add_argument("--outfile", type=str, default="AIMD_extractor.log", help="Output file name.")
     parser.add_argument("--time_step", type=float, default=2, help="Time step in femtoseconds (fs).")
     parser.add_argument("--ballistic_skip", type=int, default=50, help="Number of steps to skip to avoid ballistic region.")
     parser.add_argument("--step_skip", type=int, default=1, help="Number of steps to skip for efficiency.")
-    parser.add_argument("--smoothed", type=str, default="max", help="Type of smoothing for MSD.")
+    parser.add_argument("--smoothed", type=str, default="max", help="Type of smoothing for MSD (max, constant or none).")
     parser.add_argument("--temperatures", nargs="+", type=int, help="List of temperatures in Kelvin.")
     args = parser.parse_args()
 
