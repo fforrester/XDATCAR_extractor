@@ -45,9 +45,7 @@ AIMD_extractor --help
 ## Example Usage
 
 Analysing AIMD runs for species "Li" at temperatures 300K and 600K:
-```
-python aimd_extractor.py Li --temperatures 300 600
-```
+```python aimd_extractor.py Li --temperatures 300 600```
 Analysing AIMD runs for species "Na" with a custom output filename:
 ```python aimd_extractor.py Na --outfile analysis_results.log```
 Analyzing AIMD runs for species "O" with a 1 fs time step:
