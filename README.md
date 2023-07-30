@@ -1,5 +1,6 @@
 # AIMD_extractor
-Tool for extracting MSD, calculating activation energy, conductivities and diffusivities from VASP AIMD runs.
+
+The AIMD Extractor is a Python code that analyses VASP (Vienna Ab initio Simulation Package) AIMD (Ab initio Molecular Dynamics) runs to calculate the Mean Squared Displacement (MSD), diffusivity, and conductivity for a given chemical species. It makes use of the pymatgen library to handle the necessary computations.
 
 Note: This code is not robust and is only intended for use within the author's directory architecture. A couple of examples of situations where this will work are given below:
 
@@ -7,6 +8,8 @@ temperature_1000 / run_{i} / XDATCAR
 800K / run{j} / XDATCAR   
 
 Variability in the number of runs per temperature is permitted, i.e. where i ≠ j
+
+However, currently all runs must have the following form run_{i} --> This will likely be changed in due course. 
 
 ## Installation
 
@@ -50,9 +53,6 @@ Analysing AIMD runs for species "Na" with a custom output filename:
 ```python aimd_extractor.py Na --outfile analysis_results.log```
 Analyzing AIMD runs for species "O" with a 1 fs time step:
 ```python aimd_extractor.py O --time_step 1```
-
-
-
 
 ## Disclaimer
 
