@@ -122,9 +122,18 @@ def main():
         if not temperature_range_dict:
             print("No temperature directories found.")
             return
-    else:
-        userinputted_temps = sorted(args.temperatures)
-        temperature_range_dict = {f"{temp}": temp for temp in args.temperatures}
+    else
+        # If args.temperatures are provided, use the specified temperatures to find corresponding directories
+        temperature_range_dict = {}
+        for temp in args.temperatures:
+            directory = find_directory_for_temperature(os.getcwd(), temp)
+            if directory:
+                temperature_range_dict[directory] = temp
+            else:
+                print(f"Temperature directory for {temp}K not found.")
+        if not temperature_range_dict:
+            print("No valid temperature directories found for the provided temperatures.")
+            return
 
 
     calculate_conductivity(args.species, temperature_range_dict, args.outfile,
