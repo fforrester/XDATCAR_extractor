@@ -116,14 +116,15 @@ def main():
     parser.add_argument("--smoothed", type=str, default="max", help="Type of smoothing for MSD (max, constant or none).")
     parser.add_argument("--temperatures", nargs="+", type=int, help="List of temperatures in Kelvin.")
     args = parser.parse_args()
-
+    
+    # If args.temperatures ARE NOT provided, use the find_numbers_in_directory names to locate possible temperatures.
     if not args.temperatures:
         temperature_range_dict =  find_numbers_in_directory_names(os.getcwd())
         if not temperature_range_dict:
             print("No temperature directories found.")
             return
-    else
-        # If args.temperatures are provided, use the specified temperatures to find corresponding directories
+    else:
+        # If args.temperatures ARE provided, use the specified temperatures to find corresponding directories
         temperature_range_dict = {}
         for temp in args.temperatures:
             directory = find_directory_for_temperature(os.getcwd(), temp)
