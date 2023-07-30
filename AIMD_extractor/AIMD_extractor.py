@@ -9,7 +9,7 @@ import argparse
 class InvalidTemperatureFormatError(ValueError):
     pass
 
-class TemperatureDirectoryNotFoundError(FileNotFoundError):
+class DirectoryNotFoundError(FileNotFoundError):
     pass
 
 def write_to_output(outfile, string):
@@ -62,7 +62,7 @@ def get_run_range(temperature_directory):
     numeric_directories = [int(re.search(r'run_(\d+)', dir_name).group(1)) for dir_name in os.listdir(temperature_directory) if re.search(r'run_(\d+)', dir_name)]
 
     if not numeric_directories:
-        raise TemperatureDirectoryNotFoundError(f"No run directories found inside '{temperature_directory}'.")
+        raise DirectoryNotFoundError(f"No run directories found inside '{temperature_directory}'.")
 
     return min(numeric_directories), max(numeric_directories)
     
