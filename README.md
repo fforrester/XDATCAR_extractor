@@ -48,15 +48,15 @@ AIMD_extractor --help
 ## Example Usage
 
 Analysing AIMD runs for species "Li" at temperatures 300K and 600K:
-```python aimd_extractor.py Li --temperatures 300 600```
+```AIMD_extractor Li --temperatures 300 600```
 Analysing AIMD runs for species "Na" with a custom output filename:
-```python aimd_extractor.py Na --outfile analysis_results.log```
+```AIMD_extractor Na --outfile analysis_results.log```
 Analyzing AIMD runs for species "O" with a 1 fs time step:
-```python aimd_extractor.py O --time_step 1```
+```AIMD_extractor O --time_step 1```
 
 ## Disclaimer
 
 This code is not affiliated with VASP. This programme is made available under the MIT License; use and modify it at your own risk.
 
 ## Acknowledgements
-The AIMD_extractor uses the pymatgen library for diffusivity and conductivity calculations. For more information about pymatgen, visit https://pymatgen.org/.
+The AIMD_extractor uses the pymatgen library for diffusivity and conductivity calculations. For more information about pymatgen, visit [https://pymatgen.org/].
