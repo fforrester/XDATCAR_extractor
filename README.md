@@ -26,7 +26,7 @@ pip install git+https://github.com/fforrester/AIMD_extractor.git
 
 ## Implementation 
 
-Ensure that your VASP AIMD runs have the required directory structure, including directories with numeric temperatures as a part of their names, e.g., 300K, 600, T900,1000_K etc.
+Ensure that your VASP AIMD runs have the required directory structure, including directories with numeric temperatures as a part of their names, e.g., 300K, 600, T900, 1000_K, Li3PS4_1200K, etc.
 
 Run the AIMD_Extractor with the following command:
 ```
