@@ -47,11 +47,11 @@ AIMD_extractor --help
 ```
 ## Example Usage
 
-Analysing AIMD runs for species "Li" at temperatures 300K and 600K:
+* Analysing AIMD runs for species "Li" at temperatures 300K and 600K:
 ```AIMD_extractor Li --temperatures 300 600```
-Analysing AIMD runs for species "Na" with a custom output filename:
+* Analysing AIMD runs for species "Na" with a custom output filename:
 ```AIMD_extractor Na --outfile analysis_results.log```
-Analyzing AIMD runs for species "O" with a 1 fs time step:
+* Analyzing AIMD runs for species "O" with a 1 fs time step:
 ```AIMD_extractor O --time_step 1```
 
 ## Disclaimer
