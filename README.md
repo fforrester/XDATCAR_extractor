@@ -9,7 +9,7 @@ temperature_1000 / run_{i} / XDATCAR
 
 Variability in the number of runs per temperature is permitted, i.e. where i ≠ j
 
-However, currently all runs must have the following form run_{i} --> This will likely be changed in due course. 
+However, currently all runs must have the following form run_{i} --> This will likely be changed when I get chance. 
 
 ## Installation
 
