@@ -30,7 +30,7 @@ Ensure that your VASP AIMD runs have the required directory structure, including
 
 Run the AIMD_Extractor with the following command:
 ```
-python aimd_extractor.py <species> [--outfile <output_filename>] [--time_step <time_step>] [--ballistic_skip <ballistic_skip>] [--step_skip <step_skip>] [--smoothed <smoothing_type>] [--temperatures <temperature_list>]
+AIMD_extractor.py <species> [--outfile <output_filename>] [--time_step <time_step>] [--ballistic_skip <ballistic_skip>] [--step_skip <step_skip>] [--smoothed <smoothing_type>] [--temperatures <temperature_list>]
 ```
 
 * species : The chemical species you want to analyze, e.g., "Li", "Na", "O", etc.
