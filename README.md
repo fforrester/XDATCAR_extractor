@@ -28,9 +28,9 @@ pip install git+https://github.com/fforrester/AIMD_extractor.git
 
 Ensure that your VASP AIMD runs have the required directory structure, including directories with numeric temperatures as a part of their names, e.g., 300K, 600, T900, 1000_K, Li3PS4_1200K, etc.
 
-Run the AIMD_Extractor with the following command:
+Run the AIMD_extractor with the following command:
 ```
-AIMD_extractor.py <species> [--outfile <output_filename>] [--time_step <time_step>] [--ballistic_skip <ballistic_skip>] [--step_skip <step_skip>] [--smoothed <smoothing_type>] [--temperatures <temperature_list>]
+AIMD_extractor <species> [--outfile <output_filename>] [--time_step <time_step>] [--ballistic_skip <ballistic_skip>] [--step_skip <step_skip>] [--smoothed <smoothing_type>] [--temperatures <temperature_list>]
 ```
 
 * species : The chemical species you want to analyze, e.g., "Li", "Na", "O", etc.
