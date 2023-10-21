@@ -111,7 +111,7 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
     write_to_output(outfile, f"Ea_x = {Ea_x:.3f} +/- {sEa_x:.3f}")
     write_to_output(outfile, f"Ea_y = {Ea_y:.3f} +/- {sEa_y:.3f}")
     write_to_output(outfile, f"Ea_z = {Ea_z:.3f} +/- {sEa_z:.3f}")
-    write_to_output(outfile, f"Ea_parallel = {Ea_p:.3f} +/- {sEa_p:.3p}")
+    write_to_output(outfile, f"Ea_parallel = {Ea_p:.3f} +/- {sEa_p:.3f}")
 
     
     conductivity = get_extrapolated_conductivity(temperatures, diffusivities, 300, structures[0], species)
