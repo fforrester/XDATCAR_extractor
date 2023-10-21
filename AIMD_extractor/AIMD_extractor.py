@@ -73,6 +73,9 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
     write_to_output(outfile, f"Temperatures: {list(temperature_range_dict.values())}")
     write_to_output(outfile, "-----------------------------")
     diffusivities = []
+    diffusivities_x = []
+    diffusivities_y = []
+    diffusivities_z = []
     
     temperatures = list(temperature_range_dict.values())
     for temperature_dir, temperature in temperature_range_dict.items():
@@ -92,9 +95,25 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
         da.export_msdt(f"msd.{temperature}.dat")
 
         diffusivities.append(da.diffusivity)
+        diffusivities_x.append(da.diffusivity_components[0])
+        diffusivities_y.append(da.diffusivity_components[1])
+        diffusivities_z.append(da.diffusivity_components[2])
+        
     Ea, c, sEa = fit_arrhenius(temperatures, diffusivities)
+    Ea_x, c_x, sEa_x = fit_arrhenius(temperatures, diffusivities_x)
+    Ea_y, c_y, sEa_y = fit_arrhenius(temperatures, diffusivities_y)
+    Ea_z, c_z, sEa_z = fit_arrhenius(temperatures, diffusivities_z)
+
+    diff_p = [np.sqrt(diff_x**2 +diff_y**2) for diff_x, diff_y in zip(diffusivities_x, diffusivities_y)]
+    Ea_p , c_p, sEa_p = fit_arrhenius(temperatures, diff_p)
 
     write_to_output(outfile, f"Ea = {Ea:.3f} +/- {sEa:.3f}")
+    write_to_output(outfile, f"Ea_x = {Ea_x:.3f} +/- {sEa_x:.3f}")
+    write_to_output(outfile, f"Ea_y = {Ea_y:.3f} +/- {sEa_y:.3f}")
+    write_to_output(outfile, f"Ea_z = {Ea_z:.3f} +/- {sEa_z:.3f}")
+    write_to_output(outfile, f"Ea_parallel = {Ea_p:.3f} +/- {sEa_p:.3p}")
+
+    
     conductivity = get_extrapolated_conductivity(temperatures, diffusivities, 300, structures[0], species)
 
     IT = np.divide(1, temperatures)
