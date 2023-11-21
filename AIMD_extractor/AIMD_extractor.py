@@ -58,8 +58,8 @@ def find_directory_for_temperature(directory, userinputted_temps):
     return matching_directory
 
 def get_run_range(temperature_directory):
-    # Use regular expression to find numeric run numbers from the directory names (e.g., run_1, run_2, etc.)
-    numeric_directories = [int(re.search(r'run_(\d+)', dir_name).group(1)) for dir_name in os.listdir(temperature_directory) if re.search(r'run_(\d+)', dir_name)]
+    # Use regular expression to find numeric run numbers from the directory names (e.g., run_1, run_2, etc.) ignoring run_0.
+    numeric_directories = [int(re.search(r'run_(\d+)', dir_name).group(1)) for dir_name in os.listdir(temperature_directory) if re.search(r'run_(\d+)', dir_name) and re.search(r'run_(\d+)', dir_name).group(1) != '0']
 
     if not numeric_directories:
         raise DirectoryNotFoundError(f"No run directories found inside '{temperature_directory}'.")
