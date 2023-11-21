@@ -5,7 +5,7 @@ The AIMD Extractor is a Python module that analyses VASP (Vienna Ab initio Simul
 Note: This code is not robust and is only intended for use within the author's directory architecture. A couple of examples of situations where this will work are given below:
 
 temperature_1000 / run_{i} / XDATCAR  
-800K / run{j} / XDATCAR   
+800K/run_{j}/XDATCAR   
 
 Variability in the number of runs per temperature is permitted, i.e. where i ≠ j. It should also be noted where i or j = 0 the directory will be ignored. 
 
