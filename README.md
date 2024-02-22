@@ -1,5 +1,5 @@
 # XDATCAR_extractor
-
+MBFDJK
 The XDATCAR Extractor is a Python module that analyses XDATCAR files to calculate the Mean Squared Displacement (MSD), diffusivity, and conductivity for a given chemical species. It makes use of the pymatgen library to handle the necessary computations.
 
 Note: This code is not robust and is only intended for use within the author's directory architecture. A couple of examples of situations where this will work are given below:
