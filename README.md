@@ -1,6 +1,6 @@
-# AIMD_extractor
+# XDATCAR_extractor
 
-The AIMD Extractor is a Python module that analyses VASP (Vienna Ab initio Simulation Package) AIMD (Ab initio Molecular Dynamics) runs to calculate the Mean Squared Displacement (MSD), diffusivity, and conductivity for a given chemical species. It makes use of the pymatgen library to handle the necessary computations.
+The XDATCAR Extractor is a Python module that analyses XDATCAR files to calculate the Mean Squared Displacement (MSD), diffusivity, and conductivity for a given chemical species. It makes use of the pymatgen library to handle the necessary computations.
 
 Note: This code is not robust and is only intended for use within the author's directory architecture. A couple of examples of situations where this will work are given below:
 
@@ -15,22 +15,22 @@ Currently all runs must have the following form run_{i} --> This will likely be 
 
 Clone the repo and install:
 ```
-git clone https://github.com/fforrester/AIMD_extractor
-cd AIMD_extractor
+git clone https://github.com/fforrester/XDATACR_extractor
+cd XDATCAR_extractor
 pip install .
 ```
 ### Alternatively
 ```
-pip install git+https://github.com/fforrester/AIMD_extractor.git
+pip install git+https://github.com/fforrester/XDATCAR_extractor.git
 ```
 
 ## Implementation 
 
-Ensure that your VASP AIMD runs have the required directory structure, including directories with numeric temperatures as a part of their names, e.g., 300K, 600, T900, 1000_K, Li3PS4_1200K, etc.
+Ensure that your runs have the required directory structure, including directories with numeric temperatures as a part of their names, e.g., 300K, 600, T900, 1000_K, Li3PS4_1200K, etc.
 
-Run the AIMD_extractor with the following command:
+Run the XDATCAR_extractor with the following command:
 ```
-AIMD_extractor <species> [--outfile <output_filename>] [--time_step <time_step>] [--ballistic_skip <ballistic_skip>] [--step_skip <step_skip>] [--smoothed <smoothing_type>] [--temperatures <temperature_list>]
+XDATCAR_extractor <species> [--outfile <output_filename>] [--time_step <time_step>] [--ballistic_skip <ballistic_skip>] [--step_skip <step_skip>] [--smoothed <smoothing_type>] [--temperatures <temperature_list>]
 ```
 
 * species : The chemical species you want to analyze, e.g., "Li", "Na", "O", etc.
@@ -43,15 +43,15 @@ AIMD_extractor <species> [--outfile <output_filename>] [--time_step <time_step>]
 
 To view functionality, view the help message:
 ```
-AIMD_extractor --help
+XDATCAR_extractor --help
 ```
 ## Example Usage
 
 * Analysing AIMD runs for species "Li" at temperatures 300K and 600K:
-```AIMD_extractor Li --temperatures 300 600```
+```XDATCAR_extractor Li --temperatures 300 600```
 * Analysing AIMD runs for species "Na" with a custom output filename:
-```AIMD_extractor Na --outfile analysis_results.log```
-* Analyzing AIMD runs for species "O" with a 1 fs time step:
+```XDATCAR_extractor Na --outfile analysis_results.log```
+* Analyzing XDATACR for species "O" with a 1 fs time step:
 ```AIMD_extractor O --time_step 1```
 
 ## Disclaimer
