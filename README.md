@@ -15,7 +15,7 @@ Currently all runs must have the following form run_{i} --> This will likely be 
 
 Clone the repo and install:
 ```
-git clone https://github.com/fforrester/XDATACR_extractor
+git clone https://github.com/fforrester/XDATACR_extractor.git
 cd XDATCAR_extractor
 pip install .
 ```
