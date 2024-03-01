@@ -111,7 +111,7 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
     write_to_output(outfile, f"Ea_x = {Ea_x:.3f} +/- {sEa_x:.3f}")
     write_to_output(outfile, f"Ea_y = {Ea_y:.3f} +/- {sEa_y:.3f}")
     write_to_output(outfile, f"Ea_z = {Ea_z:.3f} +/- {sEa_z:.3f}")
-    write_to_output(outfile, f"Ea_parallel = {Ea_p:.3f} +/- {sEa_p:.3f}")
+    write_to_output(outfile, f"Ea_xy = {Ea_p:.3f} +/- {sEa_p:.3f}")
 
     
     conductivity = get_extrapolated_conductivity(temperatures, diffusivities, 300, structures[0], species)
@@ -128,7 +128,7 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
 def main():
     parser = argparse.ArgumentParser(description="Tool for calculating MSD, diffusivity and conductivity from VASP AIMD runs.")
     parser.add_argument("species", type=str, help="The chemical species to analyze.")
-    parser.add_argument("--outfile", type=str, default="AIMD_extractor.log", help="Output file name.")
+    parser.add_argument("--outfile", type=str, default="XDATCAR_extractor.log", help="Output file name.")
     parser.add_argument("--time_step", type=float, default=2, help="Time step in femtoseconds (fs).")
     parser.add_argument("--ballistic_skip", type=int, default=50, help="Number of steps to skip to avoid ballistic region.")
     parser.add_argument("--step_skip", type=int, default=1, help="Number of steps to skip for efficiency.")
