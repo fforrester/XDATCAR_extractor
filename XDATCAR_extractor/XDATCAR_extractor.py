@@ -82,11 +82,16 @@ def calculate_conductivity(species, temperature_range_dict, outfile, time_step=2
         run_start, run_end = get_run_range(temperature_dir)
 
         structures = []
-        for run in range(run_start, run_end):
-            filepath = os.path.join(temperature_dir, f"run_{run}", "XDATCAR")
+        if run_start == run_end:
+            filepath = os.path.join(temperature_dir, f"run_{run_start}", "XDATCAR")
             write_to_output(outfile, f"Reading from {filepath}...")
             structures += Xdatcar(filepath).structures
-
+        else:
+            for run in range(run_start, run_end):
+                filepath =os.path.join(temperature_dir, f"run_{run}", "XDATCAR")
+                write_to_output(outfile, f"Reading from {filepath}...")
+                structures += Xdatcar(filepath).structures
+                
         structures = structures[ballistic_skip:]
 
         da = DiffusionAnalyzer.from_structures(structures, species, temperature, time_step, step_skip=step_skip, smoothed=smoothed)
