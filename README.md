@@ -52,7 +52,7 @@ XDATCAR_extractor --help
 * Analysing AIMD runs for species "Na" with a custom output filename:
 ```XDATCAR_extractor Na --outfile analysis_results.log```
 * Analyzing XDATACR for species "O" with a 1 fs time step:
-```AIMD_extractor O --time_step 1```
+```XDATCAR_extractor O --time_step 1```
 
 ## Disclaimer
 
