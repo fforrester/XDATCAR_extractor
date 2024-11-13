@@ -135,7 +135,7 @@ def main():
     parser.add_argument("species", type=str, help="The chemical species to analyze.")
     parser.add_argument("--outfile", type=str, default="XDATCAR_extractor.log", help="Output file name.")
     parser.add_argument("--time_step", type=float, default=2, help="Time step in femtoseconds (fs).")
-    parser.add_argument("--ballistic_skip", type=float, default=50, help="Number of steps to skip to avoid the ballistic region.")
+    parser.add_argument("--ballistic_skip", type=int, default=50, help="Number of steps to skip to avoid the ballistic region.")
     parser.add_argument("--step_skip", type=int, default=1, help="Number of steps to skip for efficiency.")
     parser.add_argument("--smoothed", type=bool, default=True, help="Type of smoothing for MSD (True or False).")
     parser.add_argument("--temperatures", nargs="+", type=int, help="List of temperatures in Kelvin.")
