@@ -33,12 +33,12 @@ Run the XDATCAR_extractor with the following command:
 XDATCAR_extractor <species> [--outfile <output_filename>] [--time_step <time_step>] [--ballistic_skip <ballistic_skip>] [--step_skip <step_skip>] [--smoothed <smoothing_type>] [--temperatures <temperature_list>]
 ```
 
-* species : The chemical species you want to analyze, e.g., "Li", "Na", "O", etc.
+* species : The chemical species you want to analyse, e.g., "Li", "Na", "O", etc.
 * --outfile <output_filename>: (Optional) Specify the output filename. Default is "AIMD_extractor.log".
 * --time_step <time_step>: (Optional) Time step in femtoseconds (fs). Default is 2 fs.
 * --ballistic_skip <ballistic_skip>: (Optional) Number of steps to skip to avoid the ballistic region. Default is 50.
 * --step_skip <step_skip>: (Optional) Number of steps to skip for efficiency. Default is 1.
-* --smoothed <smoothing_type>: (Optional) Type of smoothing for MSD. Choose from "max", "constant", or "none". Default is "max".
+* --smoothed <smoothing_type>: (Optional) Turning smoothing on or off with True opr False, respectively. Default True
 * --temperatures <temperature_list>: (Optional) Specify a list of temperatures in Kelvin. If not provided, the script will attempt to locate temperature directories based on the regular expression in the directory names.
 
 To view functionality, view the help message:
