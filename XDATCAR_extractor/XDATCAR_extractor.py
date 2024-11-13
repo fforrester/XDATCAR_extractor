@@ -135,13 +135,13 @@ def main():
     parser.add_argument("species", type=str, help="The chemical species to analyze.")
     parser.add_argument("--outfile", type=str, default="XDATCAR_extractor.log", help="Output file name.")
     parser.add_argument("--time_step", type=float, default=2, help="Time step in femtoseconds (fs).")
-    parser.add_argument("--ballistic_skip", type=int, default=50, help="Number of steps to skip to avoid ballistic region.")
+    parser.add_argument("--ballistic_skip", type=int, default=50, help="Number of steps to skip to avoid the ballistic region.")
     parser.add_argument("--step_skip", type=int, default=1, help="Number of steps to skip for efficiency.")
-    parser.add_argument("--smoothed", type=str, default="max", help="Type of smoothing for MSD (max, constant or none).")
+    parser.add_argument("--smoothed", type=bool, default=True, help="Type of smoothing for MSD (True or False).")
     parser.add_argument("--temperatures", nargs="+", type=int, help="List of temperatures in Kelvin.")
     args = parser.parse_args()
     
-    # If args.temperatures ARE NOT provided, use the find_numbers_in_directory names to locate possible temperatures.
+    # If args.temperatures ARE NOT provided use the find_numbers_in_directory names to locate possible temperatures.
     if not args.temperatures:
         temperature_range_dict =  find_numbers_in_directory_names(os.getcwd())
         if not temperature_range_dict:
